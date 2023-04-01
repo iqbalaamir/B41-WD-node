@@ -1,9 +1,10 @@
-// show dbs - list all dbs
-// use dbName -  create and switch to dbName
-// db - current db
-// show collections - list all collections
+const express = require("express"); //3rd party package
+const app = express();
+const PORT = 9000;
+// req - what we send/request to the server
+// res - what we receive from server
 
-db.books.insertMany([
+const books = [
   {
     id: "001",
     name: "Charlotte's web  Charlotte's ",
@@ -79,122 +80,23 @@ db.books.insertMany([
     trailer: "https://www.youtube.com/embed/fFGS4zZWGoA",
     id: "008",
   },
-]);
+];
 
-db.books.find({}).pretty();
+app.get("/", (req, res) => {
+  res.send("Hello Everyone🥳🥳🥳");
+});
 
-//book rating > 8
+app.get("/books", (req, res) => {
+  res.send(books);
+});
 
-db.books.find({ rating: { $gt: 8 } }).pretty();
+//get Books by ID
 
-db.books.find({ rating: { $gt: 9 } }).pretty();
+app.get("/books/:id", (req, res) => {
+  const { id } = req.params;
+  console.log(req.params);
+  const book = books.find((bk) => bk.id == id);
+  res.send(book);
+});
 
-//rating <= 7
-
-db.books.find({ rating: { $lte: 7 } }).pretty();
-
-//count - no. of documents
-
-db.books.find({}).count();
-
-//Projection
-//inclusion - 1
-
-db.books.find({}, { name: 1, rating: 1 }).pretty();
-
-//exclusion - 0
-
-db.books.find({}, { name: 0, rating: 0 }).pretty();
-
-//sorting
-
-//asc = 1
-
-db.books.find({}).sort({ rating: 1 }).pretty();
-
-//desc =  -1
-
-db.books.find({}).sort({ rating: -1 }).pretty();
-
-//projection + sorting
-
-db.books.find({}, { _id: 0, name: 1, rating: 1 }).sort({ rating: -1 }).pretty();
-
-db.books
-  .find({ rating: { $gt: 8 } }, { _id: 0, name: 1, rating: 1 })
-  .sort({ rating: -1 })
-  .pretty();
-
-//limit-2
-
-db.books
-  .find({ rating: { $gt: 8 } }, { _id: 0, name: 1, rating: 1 })
-  .sort({ rating: -1 })
-  .limit(2)
-  .pretty();
-
-//skip
-
-db.books
-  .find({ rating: { $gt: 8 } }, { _id: 0, name: 1, rating: 1 })
-  .sort({ rating: -1 })
-  .limit(2)
-  .skip(2)
-  .pretty();
-
-//aggregation
-
-//Select sum(quantity) from orders where status="urgent"
-//group by productName
-
-db.orders.insertMany([
-  { _id: 0, productName: "Steel Beam", status: "new", quantity: 10 },
-  { _id: 1, productName: "Steel Beam", status: "urgent", quantity: 20 },
-  { _id: 2, productName: "Steel Beam", status: "urgent", quantity: 30 },
-  { _id: 3, productName: "Iron Rod", status: "new", quantity: 15 },
-  { _id: 4, productName: "Iron Rod", status: "urgent", quantity: 50 },
-  { _id: 5, productName: "Iron Rod", status: "urgent", quantity: 10 },
-]);
-
-db.orders.find({}).pretty();
-
-//Stage1
-
-db.orders.aggregate([{ $match: { status: "urgent" } }]);
-
-//Stage2
-// $match, $group, $sum - aggregate operators
-
-db.orders.aggregate([
-  { $match: { status: "urgent" } },
-  {
-    $group: { _id: "$productName", totalUrgentQuantity: { $sum: "$quantity" } },
-  },
-]);
-
-//Task - 10:40
-
-// 1. Update the language for all documents -  english as default language
-
-db.books.updateMany({}, { $set: { language: "English" } });
-
-db.books.find({}).pretty();
-
-// 2. update "The Secret" - language to Tamil
-db.books.updateOne({ name: "The Secret" }, { $set: { language: "Tamil" } });
-
-// 3. update "The 5 AM Club" - language to Hindi
-db.books.updateOne({ name: "The 5 AM Club" }, { $set: { language: "Hindi" } });
-
-// 4. update "The Secret" - rating from 8.8 to 10
-
-db.books.updateOne({ name: "The Secret" }, { $set: { rating: 10 } });
-
-// 5. delete all books with rating > 8.8
-
-db.books.deleteOne({ rating: { $gt: 8.8 } })
-
-
-db.books.deleteOne({ rating: { $gt: 8 } })
-
-db.books.deleteMany({ rating: { $gt: 8 } })
+app.listen(PORT, () => console.log("Server started on port", PORT));

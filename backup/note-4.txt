@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 Live More Worry Less
+=======
+Happy Day
+>>>>>>> origin/master

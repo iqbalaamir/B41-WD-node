@@ -166,3 +166,8 @@ db.orders.aggregate([{ $match: { status: "urgent" } }]);
 // $match, $group, $sum - aggregate operators
 
 db.orders.aggregate([{ $match: { status: "urgent" } },{$group:{_id:"$productName", totalUrgentQuantity: {$sum: "$quantity"}}}]);
+
+db.books.updateMany({$set:{language:"English"}})
+db.books.updateMany({name:"The Secret"},{$set:{language:"Tamil"}})
+db.books.updateMany({name:"The Secret"},{$set:{language:"Tamil"}})
+db.books.deleteMany({ rating: { $gt: 8.8 } })

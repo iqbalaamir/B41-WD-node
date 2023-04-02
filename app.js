@@ -1,5 +1,5 @@
-const express = require('express')
-const {MongoClient} = require('mongodb');
+import express from "express";//3rd party package
+import {MongoClient} from 'mongodb';
 
 const app =  express();
 const MONGO_URL = 'mongodb://localhost:27017';

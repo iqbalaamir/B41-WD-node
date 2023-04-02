@@ -1,4 +1,4 @@
-const express = require("express"); //3rd party package
+import express from "express";//3rd party package
 const app = express();
 const PORT = 9000;
 // req - what we send/request to the server

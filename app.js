@@ -1,6 +1,9 @@
 const express = require('express')
+const {MongoClient} = require('mongodb');
 
 const app =  express();
+
+
 
 app.get('/',(req,res)=>{
     res.send("hello")
@@ -95,26 +98,22 @@ const books = [
 
   app.get('/books', (req, res) => {
     let { language, rating } = req.query;
-    
-    // If no filters are applied, return all the books
+    console.log(language, rating)
     if (!language && !rating) {
       return res.json(books);
     }
     let data = [];
-    // Filter books by language if language query param is present
     if (language) {
       language = language.toLowerCase();
       data = books.filter(book => book.language.toLowerCase() === language);
     }
     
-    // Filter books by rating if rating query param is present
     if (rating) {
       rating = parseFloat(rating);
-      data = books.filter(book => book.rating === rating);
+      data = books.filter(book => book.rating >= rating);
     }
     
-    // Return filtered books
-    res.json(books);
+    res.json(data);
   });
   
 

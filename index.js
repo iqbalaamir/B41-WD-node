@@ -3,7 +3,7 @@ const app = express();
 const PORT = 9000;
 // req - what we send/request to the server
 // res - what we receive from server
-const MONGO_URL = 'mongodb://localhost:27017/b41we';
+const MONGO_URL = 'mongodb://localhost:27017';
 async function createConnection() {
   const client = new MongoClient(MONGO_URL);
   await client.connect();

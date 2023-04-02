@@ -2,7 +2,14 @@ const express = require('express')
 const {MongoClient} = require('mongodb');
 
 const app =  express();
-
+const MONGO_URL = 'mongodb://localhost:27017';
+async function createConnection() {
+  const client = new MongoClient(MONGO_URL);
+  await client.connect();
+  console.log("MongoDB is connected");
+  return client;
+}
+const client =  createConnection();
 
 
 app.get('/',(req,res)=>{
@@ -117,9 +124,11 @@ const books = [
   });
   
 
-app.get('/book/:id', (req,res) => {
+app.get('/book/:id', async (req,res) => {
     const {id} = req.params
-    const data = books.find(books => books.id === id)
+    // const data = books.find(books => books.id === id)
+    const data  = await client.db("b41we").collection("books").findOne({id:id});
+
     res.send(data);
    
 })

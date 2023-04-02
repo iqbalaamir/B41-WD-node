@@ -1,15 +1,22 @@
 import express from "express";//3rd party package
 import {MongoClient} from 'mongodb';
+import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config()
 
 const app =  express();
-const MONGO_URL = 'mongodb://localhost:27017';
+// Connection URL
+// console.log(process.env);
+const MONGO_URL= process.env.MONGO_URL;
+
+
+//create connection
 async function createConnection() {
   const client = new MongoClient(MONGO_URL);
   await client.connect();
   console.log("MongoDB is connected");
   return client;
 }
-const client =  createConnection();
+const client = await createConnection();
 
 
 app.get('/',(req,res)=>{
@@ -103,22 +110,23 @@ const books = [
   ];
   
 
-  app.get('/books', (req, res) => {
+  app.get('/books', async(req, res) => {
     let { language, rating } = req.query;
-    console.log(language, rating)
-    if (!language && !rating) {
-      return res.json(books);
-    }
-    let data = [];
-    if (language) {
-      language = language.toLowerCase();
-      data = books.filter(book => book.language.toLowerCase() === language);
-    }
+    // console.log(language, rating)
+    // if (!language && !rating) {
+    //   return res.json(books);
+    // }
+    // let data = [];
+    // if (language) {
+    //   language = language.toLowerCase();
+    //   data = books.filter(book => book.language.toLowerCase() === language);
+    // }
     
-    if (rating) {
-      rating = parseFloat(rating);
-      data = books.filter(book => book.rating >= rating);
-    }
+    // if (rating) {
+    //   rating = parseFloat(rating);
+    //   data = books.filter(book => book.rating >= rating);
+    // }
+    const data  = await client.db("b41we").collection("books").find(req.params).toArray();
     
     res.json(data);
   });
@@ -133,13 +141,13 @@ app.get('/book/:id', async (req,res) => {
    
 })
 
-app.get('/book/:id', (req,res) => {
-    const {id} = req.params
-    const data = book.find(book => book.id === id)
-    res.send(data);
-   
+app.delete('/book/:id', async(req,res) => {
+  const {id} = req.params
+  const data  = await client.db("b41we").collection("books").deleteOne({id:id}); 
+  res.send(data);
+ 
 })
 
-app.listen(3000 , () => {
-    console.log('Example app listening on port 3000!');
+app.listen(process.env.PORT , () => {
+    console.log('Example app listening on port 4000!');
 })

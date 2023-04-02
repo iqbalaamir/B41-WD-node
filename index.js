@@ -3,7 +3,14 @@ const app = express();
 const PORT = 9000;
 // req - what we send/request to the server
 // res - what we receive from server
-
+const MONGO_URL = 'mongodb://localhost:27017/b41we';
+async function createConnection() {
+  const client = new MongoClient(MONGO_URL);
+  await client.connect();
+  console.log("MongoDB is connected");
+  return client;
+}
+const client = await createConnection();
 const books = [
   {
     id: "001",
@@ -92,10 +99,11 @@ app.get("/books", (req, res) => {
 
 //get Books by ID
 
-app.get("/books/:id", (req, res) => {
+app.get("/books/:id", async (req, res) => {
   const { id } = req.params;
   console.log(req.params);
-  const book = books.find((bk) => bk.id == id);
+  // const book = books.find((bk) => bk.id == id);
+  const book  = await client.collection("books").findOne({id:id});
   res.send(book);
 });
 
